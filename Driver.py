@@ -6,6 +6,7 @@
 #The powerpoint provided should allow for enough insight
 #
 from coin import coin
+import time
 
 count = 0
 overcount = 0
@@ -17,24 +18,26 @@ rip = coin('ripple')
 iota = coin('iota')
 #populate dataset and add metrics when necessary
 cryptos_array = [btc, eth, tron, rip, iota]
-while overcount < 100:
+while overcount < 300:
 
     for x in cryptos_array:
         x.basicInfo()
         count = count + 1
-        #extra debugging
-        print(x.count)
+        #extra debugging step because google API kept kicking me out
+        if count % 450 == 0:
+            time.sleep(60)
         if count % 500 == 0:
             for z in cryptos_array:
                 z.advanceOptiuon()
 
 # ensure program is actually alive
     overcount = overcount + 1
+    print(overcount)
     print(count)
 #
 #Tallies the results after 6h
 #
-if count == 3000:
+if count == 300:
     for n in cryptos_array:
         print(n.tally())
 
