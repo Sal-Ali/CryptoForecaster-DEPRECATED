@@ -55,6 +55,9 @@ class coin:
         for x in data1:
             if x == 0 or  x == None:
                 data1.__delitem__(x)
+        for q in data2:
+            if q == 0 or q == None:
+                data2.__delitem__(q)
         dataframe1 = pd.DataFrame(data1)
         dataframe2 = pd.DataFrame(data2[::99])
 #ensures objects flow in and out of R and Python without catastrophic failures
@@ -76,10 +79,10 @@ class coin:
         winsandlosses = float(data1[99]) - float(data1[0])
         #the basic version of the algorithm, subject to change at a later date
         rsi = float(otherlist[1])
-        if rsi > .65:
-            rsi = 1
-        if rsi < .35:
+        if rsi > 80:
             rsi = 0
+        if rsi < 35:
+            rsi = 1
         gains = float(data1[99])
         arima = otherlist[0]
         arimaOverall = newlist[0]
@@ -89,8 +92,9 @@ class coin:
         if gains - float(arimaOverall) > 0:
             bottomthird = 0
         else:bottomthird = 1
-        midthird = float(newlist[1])
-        arimaIndex = ((2 * bottomthird * .33 + midthird * .33 + 2 * topthird * .33) * .2)
+        midthird = (newlist[1]) / 100
+        arimaIndex = (float(2/3 * bottomthird) + float(1/3 * midthird) + float(2/3 *topthird)) * 3/5
+
 
         if (rsi/2 + arimaIndex /2) > .5:
             rowtoinsert = ['', '', 'period gain: ' , str(winsandlosses), 'it is recommended to: buy', 1 , 'rsi index is: ' + str(rsi), 'arima index is: ' + str(arimaIndex)]
