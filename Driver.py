@@ -29,7 +29,7 @@ while overcount < 3000:
 
 # ensure program is actually alive
     overcount = overcount + 1
-    if overcount % 200:
+    if overcount % 200 == 0:
         for n in cryptos_array:
             print(n.tally())
     # print(overcount)
