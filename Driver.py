@@ -23,9 +23,6 @@ while overcount < 300:
     for x in cryptos_array:
         x.basicInfo()
         count = count + 1
-        #extra debugging step because google API kept kicking me out
-        if count % 450 == 0:
-            time.sleep(60)
         if count % 500 == 0:
             for z in cryptos_array:
                 z.advanceOptiuon()
@@ -37,7 +34,7 @@ while overcount < 300:
 #
 #Tallies the results after 6h
 #
-if count == 300:
+if overcount % 150:
     for n in cryptos_array:
         print(n.tally())
 

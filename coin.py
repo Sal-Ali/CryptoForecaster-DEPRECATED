@@ -37,6 +37,9 @@ class coin:
     def basicInfo(self):
         time.sleep(7.2)
         self.count = self.count + 1
+        #fixes the gspread authorization issue
+        if self.count % 75:
+            self.client.login()
         rowToInsert = [self.timestamp, self.api_json[0]['price_usd']]
         self.sheetname.insert_row(rowToInsert)
 
