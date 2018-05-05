@@ -18,7 +18,7 @@ rip = coin('ripple')
 iota = coin('iota')
 #populate dataset and add metrics when necessary
 cryptos_array = [btc, eth, tron, rip, iota]
-while overcount < 300:
+while overcount < 3000:
 
     for x in cryptos_array:
         x.basicInfo()
@@ -29,12 +29,19 @@ while overcount < 300:
 
 # ensure program is actually alive
     overcount = overcount + 1
-    print(overcount)
-    print(count)
-#
+    if overcount % 200:
+        for n in cryptos_array:
+            print(n.tally())
+    # print(overcount)
+    # print(count)
+
 #Tallies the results after 6h
+
+# for n in cryptos_array:
+#     print(n.tally())
 #
-if overcount % 150:
-    for n in cryptos_array:
-        print(n.tally())
+
+# btc.advanceOptiuon()
+
+
 

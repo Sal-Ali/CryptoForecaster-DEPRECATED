@@ -53,17 +53,23 @@ class coin:
         data1 = self.sheetname.col_values(2)
         data2 = self.sheetname.col_values(2)
         for x in data1:
-            if x == 0 or  x == None:
-                data1.__delitem__(x)
+            if x == '':
+                data1.remove(x)
+            if x == 0 or x is None :
+                data1.remove(x)
         for q in data2:
-            if q == 0 or q == None:
-                data2.__delitem__(q)
+            if q == '':
+                data2.remove(q)
+            if q == 0 or q is None :
+                data2.remove(q)
         dataframe1 = pd.DataFrame(data1)
+        #print(dataframe1)
         dataframe2 = pd.DataFrame(data2[::99])
 #ensures objects flow in and out of R and Python without catastrophic failures
         pandas2ri.activate()
 #the final R code used, prior code can't be loaded with this functionality
         string = """statcalc <- function(x, size = 100){
+                    x <- na.omit(x)
                     library(TTR)
                     library(stats)
                     xa <- ts(x)
@@ -74,7 +80,7 @@ class coin:
                     }
                     """
         statcalc = SignatureTranslatedAnonymousPackage(string, "statcalc")
-        newlist = statcalc.statcalc(dataframe1, len(data1))
+        newlist = statcalc.statcalc(dataframe1, len(dataframe1))
         otherlist = statcalc.statcalc(dataframe2, len(dataframe2))
         winsandlosses = float(data1[99]) - float(data1[0])
         #the basic version of the algorithm, subject to change at a later date
@@ -110,31 +116,34 @@ class coin:
         j = Stack()
         values = self.sheetname.col_values(4)
         reccs = self.sheetname.col_values(6)
-        for x in values:
+        alpha = []
+        beta = []
+        for a in values:
+            if not a == '':
+                alpha.append(a)
+        for b in reccs:
+            if not b == '':
+                beta.append(b)
+
+        beta.pop()
+        alpha.reverse()
+        beta.reverse()
+        alpha.pop()
+
+        for x in alpha:
             s.push(x)
-            j.push(x)
-            if counted == 0:
-                s.pop()
+        for n in beta:
+            j.push(n)
+        while(not s.isEmpty()):
+            if not j.isEmpty():
+                total = total + float(s.peek())
+                if int(j.peek()) == 1:
+                    result = result + float(s.peek())
                 j.pop()
-                counted = 1
-
-        reccs.reverse()
-        for n in reccs:
-            n = int(n)
-            if s.isEmpty():
-                break
-            if n == 0:
-                s.pop()
-
-        while s.isEmpty() == False:
-            result = result + float(s.peek())
             s.pop()
-
-        while j.isEmpty() == False:
-            total = total + float(j.peek())
-            j.pop()
-
         string = 'Without the algorithm the G/L is: ' + str(total) + " " + 'Compared to with the algorithm at :' + str(result)
+        rowtoinsert = ['','','','','','','','', '', total, result]
+        self.sheetname.insert_row(rowtoinsert)
         return string
 
 
