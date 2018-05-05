@@ -1,7 +1,8 @@
 #Driver to run the code
 #
 #Keep in mind, RPY is pretty annoying to copy on your machine as many things like environment variable and package versions etc will differ
-#If you are on a MAC, R 3.3 and the Pyhton 3.6 with PIP *SHOULD* suffice
+#If you are on a MAC, R 3.3 and Python 3.6 with PIP *SHOULD* suffice
+#You will also need to install every package I have imported and the TTR package in R
 #
 #The powerpoint provided should allow for enough insight
 #
