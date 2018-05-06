@@ -51,20 +51,10 @@ class coin:
     def advanceOptiuon(self):
 
         data1 = self.sheetname.col_values(2)
-        data2 = self.sheetname.col_values(2)
-        for x in data1:
-            if x == '':
-                data1.remove(x)
-            if x == 0 or x is None :
-                data1.remove(x)
-        for q in data2:
-            if q == '':
-                data2.remove(q)
-            if q == 0 or q is None :
-                data2.remove(q)
+        data1[:] = [item for item in data1 if item != '']
         dataframe1 = pd.DataFrame(data1)
         #print(dataframe1)
-        dataframe2 = pd.DataFrame(data2[::99])
+        dataframe2 = pd.DataFrame(data1[::99])
 #ensures objects flow in and out of R and Python without catastrophic failures
         pandas2ri.activate()
 #the final R code used, prior code can't be loaded with this functionality
@@ -109,21 +99,17 @@ class coin:
 
 #counts up and returns how well the algorithm performed
     def tally(self):
-        counted = 0
+        aggressiveresult = 0
         result = 0
         total = 0
         s = Stack()
         j = Stack()
         values = self.sheetname.col_values(4)
         reccs = self.sheetname.col_values(6)
-        alpha = []
-        beta = []
-        for a in values:
-            if not a == '':
-                alpha.append(a)
-        for b in reccs:
-            if not b == '':
-                beta.append(b)
+        alpha = values
+        beta = reccs
+        values[:] = [item for item in values if item != '']
+        reccs[:] = [item for item in reccs if item != '']
 
         beta.pop()
         alpha.reverse()
@@ -137,14 +123,20 @@ class coin:
         while(not s.isEmpty()):
             if not j.isEmpty():
                 total = total + float(s.peek())
+                if int(j.peek()) == 0:
+                    aggressiveresult = aggressiveresult - float(s.peek())
                 if int(j.peek()) == 1:
                     result = result + float(s.peek())
+                    aggressiveresult = aggressiveresult + float(s.peek())
                 j.pop()
             s.pop()
-        string = 'Without the algorithm the G/L is: ' + str(total) + " " + 'Compared to with the algorithm at :' + str(result)
-        rowtoinsert = ['','','','','','','','', '', total, result]
+        string = 'Without the algorithm the G/L is: ' + str(total) + " " + 'Compared to with the algorithm at :' + str(result) + 'Aggressively trading: ' + str(aggressiveresult)
+        rowtoinsert = ['','','','','','','','', '', total, result, aggressiveresult]
         self.sheetname.insert_row(rowtoinsert)
         return string
+
+
+
 
 
 
