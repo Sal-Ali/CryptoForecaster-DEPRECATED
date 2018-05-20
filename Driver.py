@@ -10,43 +10,51 @@ from coin import coin
 
 import time
 import gspread
-last_time = time.time()
-def main():
-    count = 0
-    overcount = 0
-    #create coins
-    btc = coin('bitcoin')
-    eth = coin('ethereum')
-    tron = coin('tron')
-    rip = coin('ripple')
-    iota = coin('iota')
-    #populate dataset and add metrics when necessary
-    cryptos_array = [btc, eth, tron, rip, iota]
-    while(True):
+from contextlib import suppress
 
-        for x in cryptos_array:
-            x.basicInfo()
-            count = count + 1
-            if count % 500 == 0:
-                for z in cryptos_array:
-                    z.advanceOptiuon()
-# while overcount < 10000:
-#
-#     for x in cryptos_array:
-#         x.basicInfo()
-#         count = count + 1
-#         if count % 500 == 0:
-#             for z in cryptos_array:
-#                 z.advanceOptiuon()
-#
-# # ensure program is actually alive
-#     overcount = overcount + 1
-# #    print(overcount)
-#     #client login issue
-#
-#     if overcount % 100 == 0:
-#         for n in cryptos_array:
-#             print(n.tally())
+last_time = time.time()
+def run():
+    try:
+        count = 0
+        overcount = 0
+
+        #create coins
+        btc = coin('bitcoin')
+        eth = coin('ethereum')
+        tron = coin('tron')
+        rip = coin('ripple')
+        iota = coin('iota')
+        #populate dataset and add metrics when necessary
+        cryptos_array = [btc, eth, tron, rip, iota]
+
+
+
+        while overcount < 10000:
+
+            for x in cryptos_array:
+                x.main()
+                count = count + 1
+                if count % 500 == 0:
+                    for z in cryptos_array:
+                        z.advanceOptiuon()
+
+        # ensure program is actually alive
+            overcount = overcount + 1
+        #    print(overcount)
+            #client login issue
+
+            # if overcount % 100 == 0:
+            #     for n in cryptos_array:
+            #         print(n.tally())
+    except (gspread.exceptions.AuthenticationError, gspread.GSpreadException,
+            gspread.exceptions.GSpreadException, gspread.RequestError,
+            gspread.exceptions.RequestError):
+        pass
+    finally:
+        fail_time = time.time() - last_time
+        print("it took this many seconds to fail: " + str(fail_time))
+        run()
+
 
     # print(overcount)
     # print(count)
@@ -56,13 +64,9 @@ def main():
 # for n in cryptos_array:
 #     print(n.tally())
 #
-
+run()
 # btc.advanceOptiuon()
-try:
-    main()
-except gspread.exceptions.AuthenticationError:
-    fail_time = time.time() - last_time
-    print('time to fail: ' + str(fail_time))
+
 
 
 

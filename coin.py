@@ -26,35 +26,32 @@ class coin:
     #there is some API error that people online have not been able to fix, so I am attempting to deal with it
     def __init__(self, CoinName):
         self.CoinName = CoinName
-        self.api_request = requests.get("https://api.coinmarketcap.com/v1/ticker/" + self.CoinName)
-        self.api_json = json.loads(self.api_request.text)
         self.scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
         self.creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', self.scope)
         self.client = gspread.authorize(self.creds)
         self.sheetname = self.client.open('CryptoBusiness').worksheet(self.CoinName)
-        self.now = datetime.datetime.now()
         self.count = 0
-        self.timestamp = str(self.now.month) + '-' + str(self.now.day) + ' ' + str(self.now.hour) + ':' + str(self.now.minute)
 
 #returns a list to get updated to a spreadsheet
-    def basicInfo(self):
+    def main(self):
         time.sleep(7.2)
-        # self.count = self.count + 1
-        # if self.count % 25 == 0:
-        #     gspread.authorize(self.creds)
-        #     self.client.login()
+        self.count = self.count + 1
 
 
-        #attempts to fix the gspread authorization issue
-        if self.count % 25 == 0:
-            gspread.authorize(self.creds)
+        self.client = gspread.authorize(self.creds)
         self.client.login()
-        rowToInsert = [self.timestamp, self.api_json[0]['price_usd']]
+        api_request = requests.get("https://api.coinmarketcap.com/v1/ticker/" + self.CoinName)
+        api_json = json.loads(api_request.text)
+        now = datetime.datetime.now()
+        timestamp = str(now.month) + '-' + str(now.day) + ' ' + str(now.hour) + ':' + str(now.minute) + str(now.second)
+
+
+        rowToInsert = [timestamp, api_json[0]['price_usd']]
         self.sheetname.insert_row(rowToInsert)
         self.count = self.count + 1
 
         #r shell code done here purely for testing purposes, any lines beyond in this definition can be completely ignored
-        utils = importr('utils')
+        # utils = importr('utils')
         # install all packages
 
 
