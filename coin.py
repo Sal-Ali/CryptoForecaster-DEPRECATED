@@ -20,8 +20,10 @@ import rpy2 as r
 
 #########################################################################################################################
 class coin:
-    count = 0
+
     #basic class declaration for use in google spreadsheets
+    #this is an excessive amount of variables, mostly created to test and go with ease
+    #there is some API error that people online have not been able to fix, so I am attempting to deal with it
     def __init__(self, CoinName):
         self.CoinName = CoinName
         self.api_request = requests.get("https://api.coinmarketcap.com/v1/ticker/" + self.CoinName)
@@ -31,25 +33,35 @@ class coin:
         self.client = gspread.authorize(self.creds)
         self.sheetname = self.client.open('CryptoBusiness').worksheet(self.CoinName)
         self.now = datetime.datetime.now()
+        self.count = 0
         self.timestamp = str(self.now.month) + '-' + str(self.now.day) + ' ' + str(self.now.hour) + ':' + str(self.now.minute)
 
 #returns a list to get updated to a spreadsheet
     def basicInfo(self):
         time.sleep(7.2)
-        self.count = self.count + 1
-        #fixes the gspread authorization issue
-        if self.count % 75:
-            self.client.login()
+        # self.count = self.count + 1
+        # if self.count % 25 == 0:
+        #     gspread.authorize(self.creds)
+        #     self.client.login()
+
+
+        #attempts to fix the gspread authorization issue
+        if self.count % 25 == 0:
+            gspread.authorize(self.creds)
+        self.client.login()
         rowToInsert = [self.timestamp, self.api_json[0]['price_usd']]
         self.sheetname.insert_row(rowToInsert)
+        self.count = self.count + 1
 
         #r shell code done here purely for testing purposes, any lines beyond in this definition can be completely ignored
         utils = importr('utils')
         # install all packages
 
+
 #calculates the initial metrics
     def advanceOptiuon(self):
-
+        #every period calculates the appropriate statistic and prints
+        #to the console and dataset
         data1 = self.sheetname.col_values(2)
         data1[:] = [item for item in data1 if item != '']
         dataframe1 = pd.DataFrame(data1)
@@ -99,6 +111,8 @@ class coin:
 
 #counts up and returns how well the algorithm performed
     def tally(self):
+        #performs the same tally done in R, but in real time
+        #see the Rtally code for a clearer expanation
         aggressiveresult = 0
         result = 0
         total = 0
@@ -124,10 +138,10 @@ class coin:
             if not j.isEmpty():
                 total = total + float(s.peek())
                 if int(j.peek()) == 0:
-                    aggressiveresult = aggressiveresult - float(s.peek())
+                    aggressiveresult = aggressiveresult + 2* float(s.peek())
                 if int(j.peek()) == 1:
                     result = result + float(s.peek())
-                    aggressiveresult = aggressiveresult + float(s.peek())
+                    aggressiveresult = aggressiveresult - float(s.peek())
                 j.pop()
             s.pop()
         string = 'Without the algorithm the G/L is: ' + str(total) + " " + 'Compared to with the algorithm at :' + str(result) + 'Aggressively trading: ' + str(aggressiveresult)
